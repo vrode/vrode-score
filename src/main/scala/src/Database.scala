@@ -94,12 +94,18 @@ class PersonDatabase extends ElementDatabase {
         }
     }
     
-    def getPersonById( id: Int ) {
+    def getPersonById( id: Int ): Person = {
         connect;
         inTransaction {
-            personTable.lookup( id );
-
-        } 
+            val r = personTable.lookup( id )
+        }
+    }
+    
+    def getPersonByName( name: String ): Person = {
+        connect;
+        inTransaction {
+            val r = personTable.where( p => p.name === name )
+        }
     }
     
     def removePerson( person: Person ) = {
@@ -109,6 +115,24 @@ class PersonDatabase extends ElementDatabase {
         }
     }
     
+}
 
+class LoanDatabase extends ElementDatabase {
+
+    import Stockpile._
     
+    def addLoan( loan: Loan ) = {
+        connect;
+        inTransaction {
+            loanTable.insert( loan );
+        }
+    }
+    
+    def getLoansToPerson( person: Person ) = {
+        connect;
+        inTransaction {
+            loanTable.where( l => l.fromPerson === person.id )
+        }
+    }
+
 }

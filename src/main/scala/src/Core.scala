@@ -70,7 +70,6 @@ object Core {
          articleGroup has new Property( "article", "Int" );
         
         Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
-        Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
         def generate( r: String ) = r match {
             case "yes" => {
                 Generator.write( loan );
@@ -101,7 +100,21 @@ object Core {
          
          database.removePerson( new Person( "Adam Kesher" ) );
 
-        
+        val loanDatabase = new LoanDatabase();
+         loanDatabase.addLoan( 
+            new Loan( 
+                1,
+                database.getPersonByName( "David Murray" ).id,
+                database.getPersonByName( "John Carr" ).id,
+                new Date,
+                new Date,
+                new Date,
+                new Date,
+                "east ballroom",
+                "none",
+                "you know"                
+            )
+        )
         
         
       
