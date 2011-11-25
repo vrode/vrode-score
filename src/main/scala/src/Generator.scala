@@ -200,9 +200,6 @@ class VirtualClass ( datatype: Datatype ) extends Segment {
 }
 
 
-// class VirtualTableElement extends VirtualClass {}
-
-
 
 
 

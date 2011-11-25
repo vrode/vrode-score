@@ -4,20 +4,22 @@ package core;
 
 import scala.collection.mutable._;
 import java.util.{ Date => Date };
+import scala.swing._;
 
 
+// object FrontEnd extends SimpleSwingApplication {
+    // def top = new MainFrame {
+        // title = "First App"
+        // contents = { 
+            // new Button { text = "Click me" }
+        // }
+    // }
+// }
 
+        
 object Core {
-    def main( args: Array[String] ) {
-    
-      space
-      time
-      space
-      
-      EventLog.add ( new Event( 0, "The core is started.", this ) );       
-        
-      space
-        
+
+    def createDatabase = {
         // TYPE (types are unique)
         val article = new Datatype( "article" );
          article has new Property ( "name",          "String",   255 );
@@ -87,64 +89,22 @@ object Core {
             // }
         // }
         // generate( Console.readLine );
+    }
 
-
-        /*
-         *  Adds test persons
-         */        
-        val database = new PersonDatabase();
-         // database.addPerson( new Person( "Adam Kesher" ) );
-         // database.addPerson( new Person( "Ola Nordvik" ) );
-         // database.addPerson( new Person( "Jens Havik" ) );
-         // database.addPerson( new Person( "Terrence Hogan" ) );
-         // database.addPerson( new Person( "David Murray" ) );
-         // database.addPerson( new Person( "John Carr" ) );
-         // database.addPerson( new Person( "Elvis Santiago" ) );
-         // database.addPerson( new Person( "Jesus Geist" ) );
-         // database.addPerson( new Person( "Emilio Stevens" ) );
-         
-         // database.removePerson( new Person( "Adam Kesher" ) );
-        
-        try {
-            var result = database.getPersonById( 2 ).get;
-            println( result.name )
-        } catch {
-            case e: java.util.NoSuchElementException => 
-                        ( EventLog <= "Person not found" )
-        }
-        
-        val loanDatabase = new LoanDatabase();
-        
-        /*
-         *  Adds loans
-         */
-        
-        // try {
-        
-             // loanDatabase.addLoan(
-                // new Loan(
-                    // 0, 2, 4, new Date, new Date, new Date, new Date,
-                    // "location",
-                    // "none",
-                    // "purpose"
-                // )
-             // );
-             
-        // } catch {
-            // case e: com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException =>
-                // ( EventLog <= ( "Fuck off " ) )
-            // case e: RuntimeException =>
-                // ( EventLog <= ( "Fuck off" ) )
-        // }
+    def main( args: Array[String] ) {
+    
+      space
+      time
+      space
       
-      
-        var testLoans = loanDatabase.getLoansFrom( 
-            database.getPersonByName( "Ola Nordvik" ).get
-        );
+      EventLog.add ( new Event( 0, "The core is started.", this ) );       
         
-        var testLoan = testLoans(0)
+      space
         
-        println( testLoan.entity )
+        
+        
+        
+        
         
       
       

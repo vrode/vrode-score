@@ -160,20 +160,32 @@ class LoanDatabase extends ElementDatabase {
             table.insert( loan );
         }
     }
-    
-    def getLoansToPerson( person: Person ): List[Loan] = {
+
+    def getLoanById( id: Int ): Option[Loan] = {
         connect;
         inTransaction {
-            val candidate = table.where( l => person.id === l.toPerson )
-            return candidate.toList;
+            val candidate = table.lookup( id ).get;
+
+            if ( candidate.isInstanceOf[Loan] )
+                return Some( candidate );
+            else
+                return None;
+        }
+    }
+    
+    def getLoansTo( person: Person ): List[Loan] = {
+        connect;
+        inTransaction {
+            val candidates = table.where( l => person.id === l.toPerson )
+            return candidates.toList;
         }
     }
     
     def getLoansFrom( person: Person ): List[Loan] = {
         connect;
         inTransaction {
-            val candidate = table.where( l => person.id === l.fromPerson )
-            return candidate.toList;            
+            val candidates = table.where( l => person.id === l.fromPerson )
+            return candidates.toList;            
         }
     }
     
@@ -214,6 +226,14 @@ class EntityDatabase extends ElementDatabase {
         }
     }
     
+    def getEntitiesByArticle( article: Article ): List[Entity] = {
+        connect;
+        inTransaction {
+            val candidates = table.where( e => e.article === article.id );
+            return candidates.toList;
+        }
+    }
+    
 }
 
 class ArticleDatabase extends ElementDatabase {
@@ -226,6 +246,17 @@ class ArticleDatabase extends ElementDatabase {
         connect;
         inTransaction {
             table.insert( article )
+        }
+    }
+
+    def getArticleById( id: Int ): Option[Article] = {
+        connect;
+        inTransaction {
+            val candidate = table.lookup( id ).get;
+            if ( candidate.isInstanceOf[Article] )
+                return Some( candidate );
+            else
+                return None;
         }
     }
     
@@ -250,6 +281,20 @@ class CodeDatabase extends ElementDatabase {
         inTransaction {
             table.insert( code )
         }
+    }
+    
+    def getCodesByEntity( entity: Entity ) {
+        connect;
+        inTransaction {
+            val candidates = table.where( c => c.entity === entity.id );
+        }
+    }
+    
+    def removeCode( code: Code ) {
+        connect;
+        inTransaction {
+            table.deleteWhere( c => c.id === code.id );
+        }
     }    
 
 }
@@ -258,7 +303,7 @@ class CodeDatabase extends ElementDatabase {
 class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase {
 
     import Stockpile._;
-        
+    
     def addElement( element: E ) {
         connect;
         inTransaction {
