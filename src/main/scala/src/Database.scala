@@ -229,6 +229,13 @@ class ArticleDatabase extends ElementDatabase {
         }
     }
     
+    def removeArticle( article: Article ) {
+        connect;
+        inTransaction {
+            table.deleteWhere( a => a.id === article.id );
+        }
+    }
+    
 
 }
 
@@ -248,12 +255,28 @@ class CodeDatabase extends ElementDatabase {
 }
 
 
-class GenericDatabase( databaseName: String ) extends ElementDatabase {
+class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase {
 
     import Stockpile._;
+        
+    def addElement( element: E ) {
+        connect;
+        inTransaction {
+            table.insert( element );
+        }
+    }
     
-    import Stockpile.{ "databaseName" => table }
-
+    def getElement( element: E ) {
+        connect;
+        inTransaction {
+            table.where( e => element.id === e.id )
+        }
+    }
     
-    
+    def removeElement( element: E ) {
+        connect;
+        inTransaction {
+            table.deleteWhere( e => e.id === element.id )
+        }
+    }  
 }

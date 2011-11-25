@@ -17,7 +17,6 @@ class Loan (
 	var damage: String, 
 	var purpose: String
   ) extends Element with KeyedEntity[Int] {   
-    val id = 0;
 
     def extract() = {
         this.toString;

@@ -1,5 +1,9 @@
 package core;
 
+/**
+
+*/
+
 // Test.scala
 
 import org.scalatest.Spec
@@ -42,11 +46,6 @@ class CoreSpec extends Spec {
         it( "has the specified name" ) {
             assert( element.name === "test" );
         }    
-    }
-    
-    
-    describe( "Database tests" ) {
-    
     }
     
     

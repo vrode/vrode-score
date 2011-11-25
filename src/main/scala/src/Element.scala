@@ -3,10 +3,13 @@ package core;
 // Element.scala
 
 import scala.collection.mutable._;
-import org.squeryl.customtypes._;
+import org.squeryl.KeyedEntity;
 
 abstract 
- class Element {
+ class Element extends KeyedEntity[Int] {
+    
+    val id: Int = 0;
+ 
     def extract: String
     def to( group: Group[Element] ) = {
         group.add( this );
@@ -14,6 +17,10 @@ abstract
 }
 
 class Group[T <: Element] extends Element {
+
+   override
+    val id: Int = 0;
+    
     val elements: ListBuffer[T] = new ListBuffer();
     
     def add( element: T ): Unit = {

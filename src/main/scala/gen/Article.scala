@@ -9,8 +9,7 @@ class Article (
 	var name: String, 
 	var description: String
   ) extends Element with KeyedEntity[Int] {   
-    val id = 0;
-
+    
     def extract() = {
         this.toString;
     }

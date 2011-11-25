@@ -33,6 +33,10 @@ trait TripleIndentation { var indentation: Int = 3 }
 // 1st Level Class
 abstract
  class Segment extends Group[Element] {
+    
+   override
+    val id: Int = 0;
+    
     def header: String;
     def root:   String;
     def prefix: String = "{";
@@ -63,6 +67,10 @@ class IndentedBlock extends Block {
 // 3rd Level Class
 // To put a line into the Second Level - put it in a simple, non-tabbed block
 class Line extends Element with TripleIndentation {
+    
+   override
+    val id: Int = 0;
+
     val contents: String = "";
     def length = { contents.size }
     def extract = { contents }
@@ -70,6 +78,9 @@ class Line extends Element with TripleIndentation {
 
 // 2-4th Level Class
 class Word( val word: String = "" ) extends Element with Indented {
+   override 
+    val id: Int = 0;
+
    override
     def extract() = this.word;
    override
@@ -103,6 +114,9 @@ class Listing
 
 
 class VirtualClass ( datatype: Datatype ) extends Segment {
+   
+   override
+    val id: Int = 0;
     
    override
     def header  = { 
@@ -123,6 +137,7 @@ class VirtualClass ( datatype: Datatype ) extends Segment {
 
    override
     def root  = """|   
+                   |
                    |    val id = 0;
                    |
                    |    def extract() = {

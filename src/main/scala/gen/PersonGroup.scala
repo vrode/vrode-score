@@ -9,7 +9,6 @@ class PersonGroup (
 	var name: String, 
 	var person: Int
   ) extends Element with KeyedEntity[Int] {   
-    val id = 0;
 
     def extract() = {
         this.toString;
