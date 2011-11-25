@@ -9,9 +9,20 @@ import scala.swing._;
 
 // object FrontEnd extends SimpleSwingApplication {
     // def top = new MainFrame {
-        // title = "First App"
+        // title = "Core Frontend"
         // contents = { 
-            // new Button { text = "Click me" }
+            // new BoxPanel( Orientation.Vertical ) {
+                // contents += new TextArea {
+                                // tooltip = "Console Log";
+                                // border = Swing.EmptyBorder( 30, 30, 10, 30 );
+                            // }
+                // contents += new TextArea {
+                // }
+                // contents += new Button {
+                                // text_=( "Send" );
+
+                // }
+            // }
         // }
     // }
 // }
@@ -22,9 +33,9 @@ object Core {
     def createDatabase = {
         // TYPE (types are unique)
         val article = new Datatype( "article" );
-         article has new Property ( "name",         "String"     );
-         article has new Property ( "description",  "String"     );
-         article has new Property ( "value",        "Int",   "0" );
+         article has new Property ( "name",         "String"        );
+         article has new Property ( "description",  "String"        );
+         article has new Property ( "value",        "Int",      "0" );
          
         
         // COPY (types can have multiple copies)
@@ -42,17 +53,12 @@ object Core {
          code has new Property ( "entity",   "Int"    );
         
         
-        
-        
-        
         val person = new Datatype( "person" );
-         person has new Property ( "name",        "String"      );
-         person has new Property ( "phone",       "Int",    "0" );
-         person has new Property ( "affiliation", "String", ""  );
+         person has new Property ( "name",      "String"          );
+         person has new Property ( "phone",     "Int",        "0" );
+         person has new Property ( "email",     "String",     ""  );
         
 
-        
-        
         val loan = new Datatype( "loan" );        
 
         loan has (
@@ -76,13 +82,23 @@ object Core {
          articleGroup has new Property( "name", "String" );
          articleGroup has new Property( "article", "Int" );   
         
-        
-        
-        
-        
-        
-        
-          
+        // Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
+        // def generate( r: String ) = r match {
+            // case "yes" => {
+                // Generator.write( loan );
+                // Generator.write( person );
+                // Generator.write( code );
+                // Generator.write( entity );
+                // Generator.write( article );
+                // Generator.write( personGroup );
+                // Generator.write( articleGroup );
+                // Console.println( "- All done, sire" );
+            // }
+            // case _ => {
+                // Console.println( "- As you wish, sire." );
+            // }
+        // }
+        // generate( Console.readLine );
         
     }
     
@@ -104,7 +120,7 @@ object Core {
         val entityDatabase  = new EntityDatabase();
         val codeDatabase    = new CodeDatabase();
             
-        // personDatabase.initialize();
+        personDatabase.initialize();
         
         
         
@@ -115,8 +131,8 @@ object Core {
       
       space
       space
-      
-        println( "Events: " );
+
+        
         println( EventLog.extract );
       
       separator

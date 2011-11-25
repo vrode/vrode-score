@@ -9,7 +9,7 @@ import java.util.{ Date => Date };
 object EventLog extends Group[Event] {
    override
     def extract = {
-        this.elements.map( e => ( e.extract ) ).mkString;
+        "   -Events: \n\t" + this.elements.map( e => ( e.extract ) ).mkString( "\t\n" );
     }
     
     def <=( description: String ) {
@@ -28,11 +28,11 @@ class Event( val code: Int, val description: String, val source: Any, val date: 
       
    override
     def extract = {
-        (this.getClass().toString.replace( "class ", "" )) + 
+        "" + (this.getClass().toString.replace( "class ", "" )) + 
         " at " + date + 
-        " \n\tin " + source +
+        " \n\t\tin " + source +
         ": " + description + 
-        " [code: " + code + "]\n\n";
+        " [code: " + code + "]\n";
     }
     // [?] How can I inherit this method from Group, so it functions without overriding?
     // Try adding a wildcard ? type to the method, to the class, the "to" definition.
