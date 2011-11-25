@@ -9,10 +9,14 @@ class Code (
 	var code: String, 
 	var family: String, 
 	var entity: Int
-  ) extends Element with KeyedEntity[Int] {   
+  ) extends Element with KeyedEntity[Int] {
+   
+   override
+    val id = 0;
 
     def extract() = {
         this.toString;
     }
+
 
 }

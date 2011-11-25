@@ -16,10 +16,14 @@ class Loan (
 	var location: String, 
 	var damage: String, 
 	var purpose: String
-  ) extends Element with KeyedEntity[Int] {   
+  ) extends Element with KeyedEntity[Int] {
+   
+   override
+    val id = 0;
 
     def extract() = {
         this.toString;
     }
+
 
 }

@@ -22,8 +22,10 @@ object Core {
     def createDatabase = {
         // TYPE (types are unique)
         val article = new Datatype( "article" );
-         article has new Property ( "name",          "String",   255 );
-         article has new Property ( "description",   "String",   255 );
+         article has new Property ( "name",         "String"     );
+         article has new Property ( "description",  "String"     );
+         article has new Property ( "value",        "Int",   default = "0" );
+         
         
         // COPY (types can have multiple copies)
         val entity = new Datatype( "entity" );
@@ -44,7 +46,9 @@ object Core {
         
         
         val person = new Datatype( "person" );
-         person has new Property ( "name",   "String",   255 );
+         person has new Property ( "name",        "String"  );
+         // person has new Property ( "phone",       "Int"     );
+         // person has new Property ( "affiliation", "String"  );
         
 
         
@@ -70,27 +74,18 @@ object Core {
          
         val articleGroup = new Datatype( "articleGroup" );
          articleGroup has new Property( "name", "String" );
-         articleGroup has new Property( "article", "Int" );
+         articleGroup has new Property( "article", "Int" );   
         
-        // Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
-        // def generate( r: String ) = r match {
-            // case "yes" => {
-                // Generator.write( loan );
-                // Generator.write( person );
-                // Generator.write( code );
-                // Generator.write( entity );
-                // Generator.write( article );
-                // Generator.write( personGroup );
-                // Generator.write( articleGroup );
-                // Console.println( "- All done, sire" );
-            // }
-            // case _ => {
-                // Console.println( "- As you wish, sire." );
-            // }
-        // }
-        // generate( Console.readLine );
+        
+        
+        
+        
+        
+        
+          
+        
     }
-
+    
     def main( args: Array[String] ) {
     
       space
@@ -101,8 +96,12 @@ object Core {
         
       space
         
+        createDatabase
         
+        val personDatabase = new PersonDatabase();
+            personDatabase.initialize();
         
+   
         
         
         

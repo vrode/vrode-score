@@ -133,11 +133,11 @@ class VirtualClass ( datatype: Datatype ) extends Segment {
     }
     
    override
-    def prefix  = "{";
+    def prefix  = "{\n";
 
    override
     def root  = """|   
-                   |
+                   |   override
                    |    val id = 0;
                    |
                    |    def extract() = {
@@ -147,7 +147,7 @@ class VirtualClass ( datatype: Datatype ) extends Segment {
                    |""".stripMargin;
     
    override
-    def suffix  = "}";
+    def suffix  = "\n}";
     
     
    override

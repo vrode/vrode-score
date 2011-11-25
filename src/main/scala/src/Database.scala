@@ -78,11 +78,21 @@ abstract
         )
     } 
 
+    def initialize() {
+        connect;
+        inTransaction {
+            import Stockpile._;            
+            drop
+            create 
+        }
+    }
+
     inTransaction {
         import Stockpile._;            
-        // drop
-        // create 
-    }  
+        drop
+        create 
+    }
+
     
 }
 
@@ -189,12 +199,14 @@ class LoanDatabase extends ElementDatabase {
         }
     }
     
+    // entity is unique for each loan
     def removeLoansByEntity( entity: Entity ) = {
         connect;
         inTransaction {
             table.deleteWhere( l => l.entity === entity.id );         
         }       
-    }
+    }    
+    
     
     def removeLoansTo( person: Person ) = {
         connect;
@@ -209,7 +221,6 @@ class LoanDatabase extends ElementDatabase {
             table.deleteWhere( l => l.id === loan.id );         
         }     
     }
-
 }
 
 class EntityDatabase extends ElementDatabase {
@@ -217,7 +228,6 @@ class EntityDatabase extends ElementDatabase {
     import Stockpile._;
     
     var table = entityTable;
-
     
     def addEntity( entity: Entity ) {
         connect;
@@ -323,5 +333,5 @@ class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase 
         inTransaction {
             table.deleteWhere( e => e.id === element.id )
         }
-    }  
+    }
 }
