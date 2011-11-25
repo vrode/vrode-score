@@ -24,7 +24,7 @@ object Core {
         val article = new Datatype( "article" );
          article has new Property ( "name",         "String"     );
          article has new Property ( "description",  "String"     );
-         article has new Property ( "value",        "Int",   default = "0" );
+         article has new Property ( "value",        "Int",   "0" );
          
         
         // COPY (types can have multiple copies)
@@ -46,9 +46,9 @@ object Core {
         
         
         val person = new Datatype( "person" );
-         person has new Property ( "name",        "String"  );
-         // person has new Property ( "phone",       "Int"     );
-         // person has new Property ( "affiliation", "String"  );
+         person has new Property ( "name",        "String"      );
+         person has new Property ( "phone",       "Int",    "0" );
+         person has new Property ( "affiliation", "String", ""  );
         
 
         
@@ -98,10 +98,15 @@ object Core {
         
         createDatabase
         
-        val personDatabase = new PersonDatabase();
-            personDatabase.initialize();
+        val personDatabase  = new PersonDatabase();
+        val loanDatabase    = new LoanDatabase();
+        val articleDatabase = new ArticleDatabase();
+        val entityDatabase  = new EntityDatabase();
+        val codeDatabase    = new CodeDatabase();
+            
+        // personDatabase.initialize();
         
-   
+        
         
         
         
@@ -111,9 +116,11 @@ object Core {
       space
       space
       
-      println( "Events: " );
-      println( EventLog.extract );
-        
+        println( "Events: " );
+        println( EventLog.extract );
+      
+      separator
+      
       space
       space
       space
@@ -130,7 +137,7 @@ object Core {
     }
     def separator() {
         for ( n <- 1 to this.frame ) {
-            print( "*" );
+            print( "-" );
         }
         print( "\n" );   
     }
@@ -145,10 +152,10 @@ object Core {
         val dateWidth: Int = date.length;
         var appendix: String = ""
         for ( i <- 1 to ( this.frame - (dateWidth + 8 ) )) {
-           appendix += "*";
+           appendix += "-";
         }
         
-        println( "**    " + date + "  " + appendix )
+        println( "--    " + date + "  " + appendix )
     }
 }
 

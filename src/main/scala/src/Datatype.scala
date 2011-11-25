@@ -7,8 +7,8 @@ import scala.collection.mutable._;
 class Property 
   ( val keyword: String, 
     val format: String   = "String" ,
-    val length: Int      = 255      ,
     val default: String  = ""       , 
+    val length: Int      = 255      ,
     val empty: Boolean   = true     ,
     val unique: Boolean  = false    , 
     val primary: Boolean = false     ) 

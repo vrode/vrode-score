@@ -63,7 +63,8 @@ abstract
         )
         
         on( articleTable )( a => declare(
-            a.name is ( unique )
+            a.name is ( unique ),
+            a.value defaultsTo( 0 )
           )  
         )
         
@@ -86,13 +87,6 @@ abstract
             create 
         }
     }
-
-    inTransaction {
-        import Stockpile._;            
-        drop
-        create 
-    }
-
     
 }
 
@@ -309,13 +303,14 @@ class CodeDatabase extends ElementDatabase {
 
 }
 
-
+// [+]
 class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase {
 
     import Stockpile._;
     
     def addElement( element: E ) {
         connect;
+        val table = findTablesFor[E]( element ).head
         inTransaction {
             table.insert( element );
         }
@@ -323,6 +318,7 @@ class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase 
     
     def getElement( element: E ) {
         connect;
+        val table = findTablesFor[E]( element ).head
         inTransaction {
             table.where( e => element.id === e.id )
         }
@@ -330,6 +326,7 @@ class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase 
     
     def removeElement( element: E ) {
         connect;
+        val table = findTablesFor[E]( element ).head
         inTransaction {
             table.deleteWhere( e => e.id === element.id )
         }
