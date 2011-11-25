@@ -19,6 +19,11 @@ class Group[T <: Element] extends Element {
     def add( element: T ): Unit = {
         this.elements += element;
     }
+    
+    def add( list: List[T] ): Unit = {
+        this.elements.appendAll( list );
+    }
+    
     def addUnique( element: T ): Unit = {
         if ( this.elements contains element ) {
             EventLog.add ( 

@@ -5,7 +5,8 @@ package core;
 import scala.collection.mutable._;
 import java.util.{ Date => Date };
 
-// [+] allow inserting commands into QR codes
+
+
 object Core {
     def main( args: Array[String] ) {
     
@@ -86,7 +87,11 @@ object Core {
             // }
         // }
         // generate( Console.readLine );
-        
+
+
+        /*
+         *  Adds test persons
+         */        
         val database = new PersonDatabase();
          // database.addPerson( new Person( "Adam Kesher" ) );
          // database.addPerson( new Person( "Ola Nordvik" ) );
@@ -109,29 +114,45 @@ object Core {
         }
         
         val loanDatabase = new LoanDatabase();
-         loanDatabase.addLoan(
-            new Loan(
-                0, 2, 4, new Date, new Date, new Date, new Date,
-                "location",
-                "none",
-                "purpose"
-            )
-         );
         
-         
-        try {
-            var p = database.getPersonById( 4 ).get
-            var result = loanDatabase.getLoansToPerson( p );
-            println( result );
-        } catch {
-            case e: java.util.NoSuchElementException =>
-                ( EventLog <= ("No loans for the person" ) )
-        }
+        /*
+         *  Adds loans
+         */
+        
+        // try {
+        
+             // loanDatabase.addLoan(
+                // new Loan(
+                    // 0, 2, 4, new Date, new Date, new Date, new Date,
+                    // "location",
+                    // "none",
+                    // "purpose"
+                // )
+             // );
+             
+        // } catch {
+            // case e: com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException =>
+                // ( EventLog <= ( "Fuck off " ) )
+            // case e: RuntimeException =>
+                // ( EventLog <= ( "Fuck off" ) )
+        // }
+      
+      
+        var testLoans = loanDatabase.getLoansFrom( 
+            database.getPersonByName( "Ola Nordvik" ).get
+        );
+        
+        var testLoan = testLoans(0)
+        
+        println( testLoan.entity )
+        
+      
       
       
       space
       space
-       
+      
+      println( "Events: " );
       println( EventLog.extract );
         
       space

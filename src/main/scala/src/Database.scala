@@ -56,6 +56,9 @@ abstract
         
         on( loanTable )( l => declare(
             // l.id    is( indexed )
+            // entity is a unique representation of article
+            // for instance: cable#25 is an entity of "cable"-article
+            l.entity is ( unique ) 
           )  
         )
         
@@ -161,16 +164,96 @@ class LoanDatabase extends ElementDatabase {
     def getLoansToPerson( person: Person ): List[Loan] = {
         connect;
         inTransaction {
-            val candidate = loanTable.where( l => person.id === l.toPerson )
+            val candidate = table.where( l => person.id === l.toPerson )
             return candidate.toList;
         }
     }
     
-    // def getLoansFromPerson( person: Person ): Group = {
-        // connect;
-        // inTransaction {
-            // loanTable.where( l => l.fromPerson === person.id )
-        // }
-    // }
+    def getLoansFrom( person: Person ): List[Loan] = {
+        connect;
+        inTransaction {
+            val candidate = table.where( l => person.id === l.fromPerson )
+            return candidate.toList;            
+        }
+    }
+    
+    def removeLoansByEntity( entity: Entity ) = {
+        connect;
+        inTransaction {
+            table.deleteWhere( l => l.entity === entity.id );         
+        }       
+    }
+    
+    def removeLoansTo( person: Person ) = {
+        connect;
+        inTransaction {
+            table.deleteWhere( l => l.toPerson === person.id );         
+        }    
+    }
+    
+    def removeLoan( loan: Loan ) {
+        connect;
+        inTransaction {
+            table.deleteWhere( l => l.id === loan.id );         
+        }     
+    }
 
+}
+
+class EntityDatabase extends ElementDatabase {
+
+    import Stockpile._;
+    
+    var table = entityTable;
+
+    
+    def addEntity( entity: Entity ) {
+        connect;
+        inTransaction {
+            table.insert( entity )
+        }
+    }
+    
+}
+
+class ArticleDatabase extends ElementDatabase {
+
+    import Stockpile._;
+    
+    var table = articleTable;
+    
+    def addArticle( article: Article ) {
+        connect;
+        inTransaction {
+            table.insert( article )
+        }
+    }
+    
+
+}
+
+class CodeDatabase extends ElementDatabase {
+
+    import Stockpile._;
+    
+    var table = codeTable;
+    
+    def addCode( code: Code ) {
+        connect;
+        inTransaction {
+            table.insert( code )
+        }
+    }    
+
+}
+
+
+class GenericDatabase( databaseName: String ) extends ElementDatabase {
+
+    import Stockpile._;
+    
+    import Stockpile.{ "databaseName" => table }
+
+    
+    
 }

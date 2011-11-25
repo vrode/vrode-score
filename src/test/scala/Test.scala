@@ -43,4 +43,11 @@ class CoreSpec extends Spec {
             assert( element.name === "test" );
         }    
     }
+    
+    
+    describe( "Database tests" ) {
+    
+    }
+    
+    
 }
