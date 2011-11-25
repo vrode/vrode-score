@@ -69,54 +69,64 @@ object Core {
          articleGroup has new Property( "name", "String" );
          articleGroup has new Property( "article", "Int" );
         
-        Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
-        def generate( r: String ) = r match {
-            case "yes" => {
-                Generator.write( loan );
-                Generator.write( person );
-                Generator.write( code );
-                Generator.write( entity );
-                Generator.write( article );
-                Generator.write( personGroup );
-                Generator.write( articleGroup );
-                Console.println( "- All done, sire" );
-            }
-            case _ => {
-                Console.println( "- As you wish, sire." );
-            }
-        }
-        generate( Console.readLine );
+        // Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
+        // def generate( r: String ) = r match {
+            // case "yes" => {
+                // Generator.write( loan );
+                // Generator.write( person );
+                // Generator.write( code );
+                // Generator.write( entity );
+                // Generator.write( article );
+                // Generator.write( personGroup );
+                // Generator.write( articleGroup );
+                // Console.println( "- All done, sire" );
+            // }
+            // case _ => {
+                // Console.println( "- As you wish, sire." );
+            // }
+        // }
+        // generate( Console.readLine );
         
         val database = new PersonDatabase();
-         database.addPerson( new Person( "Adam Kesher" ) );
-         database.addPerson( new Person( "Ola Nordvik" ) );
-         database.addPerson( new Person( "Jens Havik" ) );
-         database.addPerson( new Person( "Terrence Hogan" ) );
-         database.addPerson( new Person( "David Murray" ) );
-         database.addPerson( new Person( "John Carr" ) );
-         database.addPerson( new Person( "Elvis Santiago" ) );
-         database.addPerson( new Person( "Jesus Geist" ) );
-         database.addPerson( new Person( "Emilio Stevens" ) );
+         // database.addPerson( new Person( "Adam Kesher" ) );
+         // database.addPerson( new Person( "Ola Nordvik" ) );
+         // database.addPerson( new Person( "Jens Havik" ) );
+         // database.addPerson( new Person( "Terrence Hogan" ) );
+         // database.addPerson( new Person( "David Murray" ) );
+         // database.addPerson( new Person( "John Carr" ) );
+         // database.addPerson( new Person( "Elvis Santiago" ) );
+         // database.addPerson( new Person( "Jesus Geist" ) );
+         // database.addPerson( new Person( "Emilio Stevens" ) );
          
-         database.removePerson( new Person( "Adam Kesher" ) );
-
+         // database.removePerson( new Person( "Adam Kesher" ) );
+        
+        try {
+            var result = database.getPersonById( 2 ).get;
+            println( result.name )
+        } catch {
+            case e: java.util.NoSuchElementException => 
+                        ( EventLog <= "Person not found" )
+        }
+        
         val loanDatabase = new LoanDatabase();
-         loanDatabase.addLoan( 
-            new Loan( 
-                1,
-                database.getPersonByName( "David Murray" ).id,
-                database.getPersonByName( "John Carr" ).id,
-                new Date,
-                new Date,
-                new Date,
-                new Date,
-                "east ballroom",
+         loanDatabase.addLoan(
+            new Loan(
+                0, 2, 4, new Date, new Date, new Date, new Date,
+                "location",
                 "none",
-                "you know"                
+                "purpose"
             )
-        )
+         );
         
-        
+         
+        try {
+            var p = database.getPersonById( 4 ).get
+            var result = loanDatabase.getLoansToPerson( p );
+            println( result );
+        } catch {
+            case e: java.util.NoSuchElementException =>
+                ( EventLog <= ("No loans for the person" ) )
+        }
       
       
       space

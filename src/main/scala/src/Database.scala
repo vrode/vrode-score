@@ -19,7 +19,7 @@ import org.squeryl.internals.FieldMetaData;
 
 
 abstract
- class ElementDatabase extends Group[Element] {
+ class ElementDatabase {
     
     var connection: Connection = this.connect;
     
@@ -77,8 +77,8 @@ abstract
 
     inTransaction {
         import Stockpile._;            
-        drop
-        create 
+        // drop
+        // create 
     }  
     
 }
@@ -86,32 +86,60 @@ abstract
 class PersonDatabase extends ElementDatabase {
 
     import Stockpile._;
+    val table = personTable;
+    
+    // Singular methods apply only to a single element,
+    // deals with ambiguity by fetching the first returned row
     
     def addPerson( person: Person ) = { 
         connect;
         inTransaction {
-            personTable.insert( person );
+            table.insert( person );
         }
     }
     
-    def getPersonById( id: Int ): Person = {
+    def getPersonById( id: Int ): Option[Person] = {
         connect;
         inTransaction {
-            val r = personTable.lookup( id )
+            val candidate = table.lookup( id ).get;
+
+            if ( candidate.isInstanceOf[Person] )
+                return Some( candidate );
+            else
+                return None;
         }
     }
     
-    def getPersonByName( name: String ): Person = {
+    def getPersonByName( name: String ): Option[Person] = {
         connect;
         inTransaction {
-            val r = personTable.where( p => p.name === name )
+            val candidate = table.where( p => p.name === name ).single;
+            
+            if ( candidate.isInstanceOf[Person] )
+                return Some( candidate );
+            else
+                return None;
         }
     }
+    
+    def getPerson( person: Person ): Person = {
+        // [+]
+        // This method should accept a blueprint and return a person
+        // this way it will check all properties a blueprint has
+        // and then return a person that fit them exactly,
+        // or return the blueprint back without any changes.
+        // When a blueprint is returned, it should be checked
+        // for equality with the one that is sent it.
+        // Equality of blueprint and return would mean that
+        // the function didn't find anything.
+        new Person( "" );
+    }
+    
     
     def removePerson( person: Person ) = {
         connect;
         inTransaction {
-            personTable.deleteWhere( p => p.name === person.name );
+            table.deleteWhere( p => p.name === person.name );
         }
     }
     
@@ -121,18 +149,28 @@ class LoanDatabase extends ElementDatabase {
 
     import Stockpile._
     
+    val table = loanTable;
+    
     def addLoan( loan: Loan ) = {
         connect;
         inTransaction {
-            loanTable.insert( loan );
+            table.insert( loan );
         }
     }
     
-    def getLoansToPerson( person: Person ) = {
+    def getLoansToPerson( person: Person ): List[Loan] = {
         connect;
         inTransaction {
-            loanTable.where( l => l.fromPerson === person.id )
+            val candidate = loanTable.where( l => person.id === l.toPerson )
+            return candidate.toList;
         }
     }
+    
+    // def getLoansFromPerson( person: Person ): Group = {
+        // connect;
+        // inTransaction {
+            // loanTable.where( l => l.fromPerson === person.id )
+        // }
+    // }
 
 }
