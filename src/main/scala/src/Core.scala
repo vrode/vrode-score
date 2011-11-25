@@ -6,26 +6,29 @@ import scala.collection.mutable._;
 import java.util.{ Date => Date };
 import scala.swing._;
 
+package core.gui {
 
-// object FrontEnd extends SimpleSwingApplication {
-    // def top = new MainFrame {
-        // title = "Core Frontend"
-        // contents = { 
-            // new BoxPanel( Orientation.Vertical ) {
-                // contents += new TextArea {
-                                // tooltip = "Console Log";
-                                // border = Swing.EmptyBorder( 30, 30, 10, 30 );
-                            // }
-                // contents += new TextArea {
-                // }
-                // contents += new Button {
-                                // text_=( "Send" );
+    // object FrontEnd extends SimpleSwingApplication {
+        // def top = new MainFrame {
+            // title = "Core Frontend"
+            // contents = { 
+                // new BoxPanel( Orientation.Vertical ) {
+                    // contents += new TextArea {
+                                    // tooltip = "Console Log";
+                                    // border = Swing.EmptyBorder( 30, 30, 10, 30 );
+                                // }
+                    // contents += new TextArea {
+                    // }
+                    // contents += new Button {
+                                    // text_=( "Send" );
 
+                    // }
                 // }
             // }
         // }
     // }
-// }
+
+}
 
         
 object Core {
