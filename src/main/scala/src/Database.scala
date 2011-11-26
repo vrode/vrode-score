@@ -50,7 +50,8 @@ abstract
         
         on( personTable )( p => declare(
             // p.id    is( indexed )
-            p.name is ( unique )
+            p.name is ( unique ),
+            p.email defaultsTo( "" )
           )  
         )
         
@@ -64,7 +65,7 @@ abstract
         
         on( articleTable )( a => declare(
             a.name is ( unique ),
-            a.value defaultsTo( 0 )
+            a.value defaultsTo( 0L )
           )  
         )
         
@@ -86,8 +87,7 @@ abstract
             drop
             create 
         }
-    }
-    
+    }    
 }
 
 class PersonDatabase extends ElementDatabase {
@@ -105,7 +105,7 @@ class PersonDatabase extends ElementDatabase {
         }
     }
     
-    def getPersonById( id: Int ): Option[Person] = {
+    def getPersonById( id: Long ): Option[Person] = {
         connect;
         inTransaction {
             val candidate = table.lookup( id ).get;
@@ -165,7 +165,7 @@ class LoanDatabase extends ElementDatabase {
         }
     }
 
-    def getLoanById( id: Int ): Option[Loan] = {
+    def getLoanById( id: Long ): Option[Loan] = {
         connect;
         inTransaction {
             val candidate = table.lookup( id ).get;
@@ -253,7 +253,7 @@ class ArticleDatabase extends ElementDatabase {
         }
     }
 
-    def getArticleById( id: Int ): Option[Article] = {
+    def getArticleById( id: Long ): Option[Article] = {
         connect;
         inTransaction {
             val candidate = table.lookup( id ).get;
@@ -261,6 +261,14 @@ class ArticleDatabase extends ElementDatabase {
                 return Some( candidate );
             else
                 return None;
+        }
+    }
+    
+    def getArticleByName( articleName: String ): Option[Article] = {
+        connect;
+        inTransaction {
+            val candidate = table.where( a => articleName === a.name );
+            return Some( candidate.toList.head );
         }
     }
     
@@ -316,12 +324,23 @@ class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase 
         }
     }
     
-    def getElement( element: E ) {
+    def getElement( element: E ) = {
         connect;
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.where( e => element.id === e.id )
         }
+    }
+    
+    def getElementById( id: Long ): Option[E] = {
+        connect;
+        val candidate: E = table.lookup( id ).get;
+
+        if ( candidate.isInstanceOf[E] )
+            return Some( candidate );
+        else
+            return None;       
+    
     }
     
     def removeElement( element: E ) {

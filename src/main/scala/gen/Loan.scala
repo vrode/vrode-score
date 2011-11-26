@@ -6,9 +6,9 @@ import org.squeryl.KeyedEntity;
 
 
 class Loan ( 
-	var entity: Int, 
-	var fromPerson: Int, 
-	var toPerson: Int, 
+	var entity: Long, 
+	var fromPerson: Long, 
+	var toPerson: Long, 
 	var timeOrdered: Date, 
 	var timeFetched: Date, 
 	var timeExpired: Date, 
@@ -16,10 +16,10 @@ class Loan (
 	var location: String, 
 	var damage: String, 
 	var purpose: String
-  ) extends Element with KeyedEntity[Int] {
+  ) extends Element with KeyedEntity[Long] {
    
    override
-    val id = 0;
+    val id: Long = 0;
 
     def extract() = {
         this.toString;

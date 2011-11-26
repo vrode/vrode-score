@@ -33,41 +33,44 @@ package core.gui {
         
 object Core {
 
-    def createDatabase = {
+    def initialize = {
+    
+        // no Ints, bro, only Longs
+    
         // TYPE (types are unique)
         val article = new Datatype( "article" );
          article has new Property ( "name",         "String"        );
          article has new Property ( "description",  "String"        );
-         article has new Property ( "value",        "Int",      "0" );
+         article has new Property ( "value",        "Long",      "0" );
          
         
         // COPY (types can have multiple copies)
         val entity = new Datatype( "entity" );
-        
-        entity has (
-           new Property( "article", "Int" )
-        );
+            entity has (
+               new Property( "article", "Long" ),
+               new Property( "state", "Double", "1" ) // shows state from 0 to 1; 0.5 is half-destroyed
+            );
         
         
         // IDENTIFICATION (copies can have multiple identifications)
         val code = new Datatype( "code" );  
          code has new Property ( "code",     "String" );           // allows alphanumeric coding 
          code has new Property ( "family",   "String" );           // QR or barcode
-         code has new Property ( "entity",   "Int"    );
+         code has new Property ( "entity",   "Long"    );
         
         
         val person = new Datatype( "person" );
          person has new Property ( "name",      "String"          );
-         person has new Property ( "phone",     "Int",        "0" );
-         person has new Property ( "email",     "String",     ""  );
+         person has new Property ( "phone",     "Long",       "0" );
+         person has new Property ( "email",     "String",     "\"\""  );
         
 
         val loan = new Datatype( "loan" );        
 
         loan has (
-            new Property( "entity",         "Int"       ),
-            new Property( "fromPerson",     "Int"       ),       // connects two persons
-            new Property( "toPerson",       "Int"       ),       // 'from' and 'to'
+            new Property( "entity",         "Long"      ),
+            new Property( "fromPerson",     "Long"      ),       // connects two persons
+            new Property( "toPerson",       "Long"      ),       // 'from' and 'to'
             new Property( "timeOrdered",    "Date"      ),       
             new Property( "timeFetched",    "Date"      ),       // has other properties
             new Property( "timeExpired",    "Date"      ),       // that describe the connection
@@ -79,29 +82,29 @@ object Core {
         
         val personGroup = new Datatype( "personGroup" );    // gives rights, like loan registration
          personGroup has new Property( "name", "String" );
-         personGroup has new Property( "person", "Int" );
+         personGroup has new Property( "person", "Long" );
          
         val articleGroup = new Datatype( "articleGroup" );
          articleGroup has new Property( "name", "String" );
-         articleGroup has new Property( "article", "Int" );   
+         articleGroup has new Property( "article", "Long" );   
         
-        // Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
-        // def generate( r: String ) = r match {
-            // case "yes" => {
-                // Generator.write( loan );
-                // Generator.write( person );
-                // Generator.write( code );
-                // Generator.write( entity );
-                // Generator.write( article );
-                // Generator.write( personGroup );
-                // Generator.write( articleGroup );
-                // Console.println( "- All done, sire" );
-            // }
-            // case _ => {
-                // Console.println( "- As you wish, sire." );
-            // }
-        // }
-        // generate( Console.readLine );
+        Console.print( "- Would you fancy to generate Element definitions? (yes/no): \n- " );
+        def generate( r: String ) = r match {
+            case "yes" => {
+                Generator.write( loan );
+                Generator.write( person );
+                Generator.write( code );
+                Generator.write( entity );
+                Generator.write( article );
+                Generator.write( personGroup );
+                Generator.write( articleGroup );
+                Console.println( "- All done, sire" );
+            }
+            case _ => {
+                Console.println( "- As you wish, sire." );
+            }
+        }
+        generate( Console.readLine );
         
     }
     
@@ -115,7 +118,7 @@ object Core {
         
       space
         
-        createDatabase
+        initialize
         
         val personDatabase  = new PersonDatabase();
         val loanDatabase    = new LoanDatabase();
@@ -124,6 +127,49 @@ object Core {
         val codeDatabase    = new CodeDatabase();
             
         personDatabase.initialize();
+        
+        personDatabase.addPerson( new Person( "David Murray" ) );
+        personDatabase.addPerson( new Person( "John Carr" ) );
+        personDatabase.addPerson( new Person( "Elvis Santiago" ) );
+        personDatabase.addPerson( new Person( "Jesus Geist" ) );
+        personDatabase.addPerson( new Person( "Emilio Stevens" ) );       
+
+
+
+       
+        ( List( 
+                new Article( "Aktiv Heoytaler", "", 0 ),
+                new Article( "DJ Flight Newmark", "", 0 ),
+                new Article( "DJ Flight Pioneer", "", 0 ),
+                new Article( "Platespiller", "", 0 ),
+                new Article( "Mikser Blaa", "", 0 ),
+                new Article( "Mikser Graa", "", 0 ),
+                new Article( "Mikrofon SM 57", "", 0 ),
+                new Article( "DJ Boks", "", 0 ),
+                new Article( "Mikrofonstativ", "", 0 ),
+                new Article( "XLR Kabel", "", 0 ),
+                new Article( "Streomkabel", "", 0 ),
+                new Article( "Phonokabel", "", 0 ),
+                new Article( "Phono-minijack kabel", "", 0 ),
+                new Article( "Prosjektor Graa", "", 0 ),
+                new Article( "Prosjektor Svart", "", 0 ),
+                new Article( "VGA (skjerm) kabel", "", 0 )
+            )
+        ).map( articleDatabase.addArticle( _ ) );
+        
+        entityDatabase.addEntity( 
+            new Entity( articleDatabase.getArticleByName( "Phonokabel" ).get.id )
+        );
+        entityDatabase.addEntity( 
+            new Entity( articleDatabase.getArticleByName( "Phonokabel" ).get.id )
+        );
+        
+        codeDatabase.addCode( new Code( "504506010222955", "qr", 12 ) );
+        codeDatabase.addCode( new Code( "504506010222955", "barcode", 12 ) );
+        
+        
+        var deliever: Long = Console.readLong;
+        
         
         
         

@@ -6,11 +6,13 @@ import org.squeryl.KeyedEntity;
 
 
 class Person ( 
-	var name: String
-  ) extends Element with KeyedEntity[Int] {
+	var name: String, 
+	var phone: Long = 0, 
+	var email: String = ""
+  ) extends Element with KeyedEntity[Long] {
    
    override
-    val id = 0;
+    val id: Long = 0;
 
     def extract() = {
         this.toString;

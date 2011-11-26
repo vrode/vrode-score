@@ -35,7 +35,7 @@ abstract
  class Segment extends Group[Element] {
     
    override
-    val id: Int = 0;
+    val id: Long = 0;
     
     def header: String;
     def root:   String;
@@ -69,7 +69,7 @@ class IndentedBlock extends Block {
 class Line extends Element with TripleIndentation {
     
    override
-    val id: Int = 0;
+    val id: Long = 0;
 
     val contents: String = "";
     def length = { contents.size }
@@ -79,7 +79,7 @@ class Line extends Element with TripleIndentation {
 // 2-4th Level Class
 class Word( val word: String = "" ) extends Element with Indented {
    override 
-    val id: Int = 0;
+    val id: Long = 0;
 
    override
     def extract() = this.word;
@@ -116,16 +116,16 @@ class Listing
 class VirtualClass ( datatype: Datatype ) extends Segment {
    
    override
-    val id: Int = 0;
+    val id: Long = 0;
     
    override
     def header  = { 
-        val parameters: ListBuffer[ (String,String,String) ] =
+        val parameters: ListBuffer[ (String, String, String) ] =
             // makes a 3-tuple of parameter-necessary datatype properties
             ( datatype.keywords, datatype.formats, datatype.defaults ).zipped.map{ (_, _, _) }; 
         
         val parents = new ListBuffer[String];
-         parents += "Element with KeyedEntity[Int]";
+         parents += "Element with KeyedEntity[Long]";
         
         // imports 
         "package core;\n\n\nimport java.util.{ Date => Date };\nimport org.squeryl.KeyedEntity;\n\n\n" +
@@ -138,7 +138,7 @@ class VirtualClass ( datatype: Datatype ) extends Segment {
    override
     def root  = """|   
                    |   override
-                   |    val id = 0;
+                   |    val id: Long = 0;
                    |
                    |    def extract() = {
                    |        this.toString;
@@ -178,7 +178,7 @@ class VirtualClass ( datatype: Datatype ) extends Segment {
               yield "\n\tvar " + (e _1) + 
                     ": " + (e _2) + 
                     {   // assigns default value
-                        if ( (e _3) != "") " = " + (e _3); 
+                        if ( (e _3) != "" ) " = " + (e _3); 
                         else "" 
                     }
             }.mkString( separator ) + "\n " +

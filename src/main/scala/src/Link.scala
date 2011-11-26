@@ -5,7 +5,10 @@ package core;
 import scala.collection.mutable._
 
 class Link extends Element {
-
+    
+   override
+    val id: Long = 0;
+   
     var source: AnyRef = "source";
     var target: AnyRef = "target";
 

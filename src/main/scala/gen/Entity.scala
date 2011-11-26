@@ -6,11 +6,12 @@ import org.squeryl.KeyedEntity;
 
 
 class Entity ( 
-	var article: Int
-  ) extends Element with KeyedEntity[Int] {
+	var article: Long, 
+	var state: Double = 1
+  ) extends Element with KeyedEntity[Long] {
    
    override
-    val id = 0;
+    val id: Long = 0;
 
     def extract() = {
         this.toString;

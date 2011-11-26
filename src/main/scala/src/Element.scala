@@ -6,9 +6,9 @@ import scala.collection.mutable._;
 import org.squeryl.KeyedEntity;
 
 abstract 
- class Element extends KeyedEntity[Int] {
+ class Element extends KeyedEntity[Long] {
     
-    val id: Int = 0;
+    val id: Long = 0;
  
     def extract: String
     def to( group: Group[Element] ) = {
@@ -19,7 +19,7 @@ abstract
 class Group[T <: Element] extends Element {
 
    override
-    val id: Int = 0;
+    val id: Long = 0;
     
     val elements: ListBuffer[T] = new ListBuffer();
     

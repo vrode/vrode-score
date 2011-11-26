@@ -7,11 +7,11 @@ import org.squeryl.KeyedEntity;
 
 class ArticleGroup ( 
 	var name: String, 
-	var article: Int
-  ) extends Element with KeyedEntity[Int] {
+	var article: Long
+  ) extends Element with KeyedEntity[Long] {
    
    override
-    val id = 0;
+    val id: Long = 0;
 
     def extract() = {
         this.toString;
