@@ -80,13 +80,13 @@ object Core {
             new Property( "purpose",        "String"    )        // event where article is used
         );
         
+        // gives rights, like loan registration
         val personGroup = new Datatype( "personGroup" );    
-         // gives rights, like loan registration
          personGroup has new Property( "name", "String" );
          personGroup has new Property( "person", "Long" );
-         
-        val articleGroup = new Datatype( "articleGroup" );
-         // classifies objects
+        
+        // classifies objects        
+        val articleGroup = new Datatype( "articleGroup" ); 
          articleGroup has new Property( "name", "String" );
          articleGroup has new Property( "article", "Long" );   
         
@@ -120,7 +120,7 @@ object Core {
         
       space
         
-        // initialize
+        initialize
         
         // val personDatabase  = new PersonDatabase();
         // val loanDatabase    = new LoanDatabase();
@@ -172,7 +172,7 @@ object Core {
         
         // var deliever: Long = Console.readLong;
         
-        PersonDatabase initialize
+        PersonDatabase reset
         
         // PersonDatabase removePerson new Person( "Dave " )
         PersonDatabase addPerson new Person( "Dave" )

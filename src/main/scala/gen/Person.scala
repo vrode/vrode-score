@@ -7,8 +7,7 @@ import org.squeryl.KeyedEntity;
 
 class Person ( 
 	var name: String, 
-	var phone: Long = 0, 
-	var email: String = ""
+	var phone: Long = 0
   ) extends Element with KeyedEntity[Long] {
    
    override

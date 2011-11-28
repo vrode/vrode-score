@@ -19,24 +19,26 @@ import org.squeryl.PrimitiveTypeMode._;
 import org.squeryl.internals.DatabaseAdapter;
 
 
-
+/**
+ *  The concrete implementations of Database-object no longer drop
+ *  the whole database. But only the table they define.
+ */
 abstract
  class ElementDatabase extends Schema {
     
-   protected
-    // val connection: Connection = connect();
-    val adapter: DatabaseAdapter = new MySQLAdapter;
+    // default to MySQL, changed when connect() is called with parameter
+    var adapter: DatabaseAdapter = new MySQLAdapter; 
    
     SessionFactory.concreteFactory = Some( () =>
         Session.create( connect(), adapter ) 
     ); 
    
-   protected
+   protected // check if wirks with PostgreSQL constructed in this fashion
     def connect( databaseType: String = "" ): Connection = databaseType match {
         
         case "mysql" => {
            
-            val adapter: DatabaseAdapter = new MySQLAdapter;
+            this.adapter = new MySQLAdapter;
            
             Class.forName("com.mysql.jdbc.Driver");
             
@@ -50,11 +52,7 @@ abstract
             DriverManager.getConnection( 
                 "jdbc:mysql://localhost/core", 
                  properties
-            ); 
-                
-            // SessionFactory.concreteFactory = Some( () =>
-                // Session.create( connection, new MySQLAdapter ) 
-            // );
+            );
             
             return connection;
                 
@@ -62,7 +60,7 @@ abstract
     
         case "postgresql" => {
             
-            val adapter: DatabaseAdapter = new PostgreSqlAdapter;
+            this.adapter = new PostgreSqlAdapter;
             
             Class.forName("org.postgresql.Driver");
 
@@ -86,13 +84,13 @@ abstract
         case _ => this.connect( "mysql" );
     }
     
-    
-    def initialize() {
-        inTransaction {
+    def reset = {
+        transaction {
             drop
-            create 
+            create
         }
-    }    
+    }
+    
 }
 
 object PersonDatabase extends ElementDatabase {
@@ -103,7 +101,7 @@ object PersonDatabase extends ElementDatabase {
       p => declare(
         p.id is ( unique  ),
         p.name is ( unique )
-        // p.email defaultsTo( "" )
+     // p.email defaultsTo( "" )
       )  
     )
     
@@ -233,7 +231,7 @@ object EntityDatabase extends ElementDatabase {
 
     on( table )( 
       e => declare(
-        // e.entity is ( unique ) 
+        e.id is ( unique ) 
       )  
     )
     
@@ -307,7 +305,7 @@ object CodeDatabase extends ElementDatabase {
 
     on( table )( 
       c => declare(
-        // c.id    is( indexed )
+        c.code    is( unique )
       )  
     )
     
