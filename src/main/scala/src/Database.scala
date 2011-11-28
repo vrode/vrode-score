@@ -16,7 +16,7 @@ import org.squeryl.adapters._;
 import org.squeryl.SessionFactory;
 import org.squeryl.annotations.Column;
 import org.squeryl.PrimitiveTypeMode._;
-import org.squeryl.internals.FieldMetaData;
+import org.squeryl.internals.DatabaseAdapter;
 
 
 
@@ -24,38 +24,68 @@ abstract
  class ElementDatabase extends Schema {
     
    protected
-    val connection: Connection = connect;
-    
+    // val connection: Connection = connect();
+    val adapter: DatabaseAdapter = new MySQLAdapter;
+   
+    SessionFactory.concreteFactory = Some( () =>
+        Session.create( connect(), adapter ) 
+    ); 
+   
    protected
-    def connect: Connection = {
-        // Class.forName("com.mysql.jdbc.Driver");
-        Class.forName("org.postgresql.Driver");
-    
-        val properties: Properties = new Properties();
-            properties.setProperty( "user", "core" );
-            properties.setProperty( "password", "67hTdGTpc3NZxFWc" ); 
-            // properties.setProperty( "autoReconnect", "true" ); 
-            // properties.setProperty( "maxReconnects", "100" ); 
-    
-        // val connection: Connection =
-        // DriverManager.getConnection( 
-            // "jdbc:mysql://localhost/core", 
-             // properties
-        // );        
-        val connection: Connection =
-        DriverManager.getConnection( 
-            "jdbc:postgresql://146.247.221.160/core", 
-             properties
-        );
-        // SessionFactory.concreteFactory = Some( () =>
-            // Session.create( connection, new MySQLAdapter ) 
-        // );          
-        SessionFactory.concreteFactory = Some( () =>
-            Session.create( connection, new PostgreSqlAdapter ) 
-        );    
+    def connect( databaseType: String = "" ): Connection = databaseType match {
         
-        return connection;
+        case "mysql" => {
+           
+            val adapter: DatabaseAdapter = new MySQLAdapter;
+           
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            val properties: Properties = new Properties();
+                properties.setProperty( "user", "core" );
+                properties.setProperty( "password", "67hTdGTpc3NZxFWc" ); 
+                properties.setProperty( "autoReconnect", "true" ); 
+                properties.setProperty( "maxReconnects", "100" );  
+                
+            val connection: Connection =
+            DriverManager.getConnection( 
+                "jdbc:mysql://localhost/core", 
+                 properties
+            ); 
+                
+            // SessionFactory.concreteFactory = Some( () =>
+                // Session.create( connection, new MySQLAdapter ) 
+            // );
+            
+            return connection;
+                
+        }
+    
+        case "postgresql" => {
+            
+            val adapter: DatabaseAdapter = new PostgreSqlAdapter;
+            
+            Class.forName("org.postgresql.Driver");
+
+            val properties: Properties = new Properties();
+                properties.setProperty( "user", "core" );
+                properties.setProperty( "password", "67hTdGTpc3NZxFWc" ); 
+            
+            val connection: Connection =
+            DriverManager.getConnection( 
+                "jdbc:postgresql://146.247.221.160/core", 
+                 properties
+            );
+            
+            SessionFactory.concreteFactory = Some( () =>
+                Session.create( connection, new PostgreSqlAdapter ) 
+            );    
+            
+            return connection;
+        }
+        
+        case _ => this.connect( "mysql" );
     }
+    
     
     def initialize() {
         inTransaction {
@@ -67,7 +97,7 @@ abstract
 
 object PersonDatabase extends ElementDatabase {
  
-    val table: Table[Person] = super.table[Person];    
+    val table: Table[Person] = super.table[Person];      
     
     on( table )( 
       p => declare(
@@ -78,14 +108,14 @@ object PersonDatabase extends ElementDatabase {
     )
     
     def addPerson( person: Person ) = {
-        connect;
+        connect();
         inTransaction {
             table.insert( person );
         }
     }
     
     def getPersonById( id: Long ): Option[Person] = {
-        connect;
+        connect();
         inTransaction {
             val candidate = table.lookup( id ).get;
 
@@ -97,7 +127,7 @@ object PersonDatabase extends ElementDatabase {
     }
     
     def getPersonByName( name: String ): Option[Person] = {
-        connect;
+        connect();
         inTransaction {
             val candidate = table.where( p => p.name === name ).single;
             
@@ -122,7 +152,7 @@ object PersonDatabase extends ElementDatabase {
     }
     
     def removePerson( person: Person ) = {
-        connect;
+        connect();
         inTransaction {
             table.deleteWhere( p => p.name === person.name );
         }
@@ -141,14 +171,14 @@ object LoanDatabase extends ElementDatabase {
     )
     
     def addLoan( loan: Loan ) = {
-        connect;
+        connect();
         inTransaction {
             table.insert( loan );
         }
     }
 
     def getLoanById( id: Long ): Option[Loan] = {
-        connect;
+        connect();
         inTransaction {
             val candidate = table.lookup( id ).get;
 
@@ -160,7 +190,7 @@ object LoanDatabase extends ElementDatabase {
     }
     
     def getLoansTo( person: Person ): List[Loan] = {
-        connect;
+        connect();
         inTransaction {
             val candidates = table.where( l => person.id === l.toPerson )
             return candidates.toList;
@@ -168,7 +198,7 @@ object LoanDatabase extends ElementDatabase {
     }
     
     def getLoansFrom( person: Person ): List[Loan] = {
-        connect;
+        connect();
         inTransaction {
             val candidates = table.where( l => person.id === l.fromPerson )
             return candidates.toList;            
@@ -176,21 +206,21 @@ object LoanDatabase extends ElementDatabase {
     }
     
     def removeLoansByEntity( entity: Entity ) = {
-        connect;
+        connect();
         inTransaction {
             table.deleteWhere( l => l.entity === entity.id );         
         }       
     }    
     
     def removeLoansTo( person: Person ) = {
-        connect;
+        connect();
         inTransaction {
             table.deleteWhere( l => l.toPerson === person.id );         
         }    
     }
     
     def removeLoan( loan: Loan ) {
-        connect;
+        connect();
         inTransaction {
             table.deleteWhere( l => l.id === loan.id );         
         }     
@@ -208,14 +238,14 @@ object EntityDatabase extends ElementDatabase {
     )
     
     def addEntity( entity: Entity ) {
-        connect;
+        connect();
         inTransaction {
             table.insert( entity )
         }
     }
     
     def getEntitiesByArticle( article: Article ): List[Entity] = {
-        connect;
+        connect();
         inTransaction {
             val candidates = table.where( e => e.article === article.id );
             return candidates.toList;
@@ -236,14 +266,14 @@ object ArticleDatabase extends ElementDatabase {
     )    
     
     def addArticle( article: Article ) {
-        connect;
+        connect();
         inTransaction {
             table.insert( article )
         }
     }
 
     def getArticleById( id: Long ): Option[Article] = {
-        connect;
+        connect();
         inTransaction {
             val candidate = table.lookup( id ).get;
             if ( candidate.isInstanceOf[Article] )
@@ -254,7 +284,7 @@ object ArticleDatabase extends ElementDatabase {
     }
     
     def getArticleByName( articleName: String ): Option[Article] = {
-        connect;
+        connect();
         inTransaction {
             val candidate = table.where( a => articleName === a.name );
             return Some( candidate.toList.head );
@@ -262,7 +292,7 @@ object ArticleDatabase extends ElementDatabase {
     }
     
     def removeArticle( article: Article ) {
-        connect;
+        connect();
         inTransaction {
             table.deleteWhere( a => a.id === article.id );
         }
@@ -282,21 +312,21 @@ object CodeDatabase extends ElementDatabase {
     )
     
     def addCode( code: Code ) {
-        connect;
+        connect();
         inTransaction {
             table.insert( code )
         }
     }
     
     def getCodesByEntity( entity: Entity ) {
-        connect;
+        connect();
         inTransaction {
             val candidates = table.where( c => c.entity === entity.id );
         }
     }
     
     def removeCode( code: Code ) {
-        connect;
+        connect();
         inTransaction {
             table.deleteWhere( c => c.id === code.id );
         }
@@ -313,7 +343,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     def table[E] = super.table; 
     
     def addElement( element: E ) {
-        connect;
+        connect();
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.insert( element );
@@ -321,7 +351,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     }
     
     def getElement( element: E ) = {
-        connect;
+        connect();
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.where( e => element.id === e.id )
@@ -329,7 +359,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     }
     
     def getElementById( id: Long ): Option[E] = {
-        connect;
+        connect();
         val candidate: E = table.lookup( id ).get;
 
         if ( candidate.isInstanceOf[E] )
@@ -340,7 +370,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     }
     
     def removeElement( element: E ) {
-        connect;
+        connect();
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.deleteWhere( e => e.id === element.id )
