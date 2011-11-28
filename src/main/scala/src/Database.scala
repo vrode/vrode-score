@@ -5,6 +5,7 @@ package core;
 import scala.collection.mutable._;
 
 import java.sql.{ DriverManager, Connection };
+import java.util.Properties;
 
 import com.mysql.jdbc.Driver;
 
@@ -21,22 +22,28 @@ import org.squeryl.internals.FieldMetaData;
 abstract
  class ElementDatabase extends Schema {
     
-    connect;
-    initialize;
+   protected
+    val connection: Connection = connect;
     
    protected
     def connect: Connection = {
         Class.forName("com.mysql.jdbc.Driver");
-        
+    
+        val properties: Properties = new Properties();
+            properties.setProperty( "user", "core" );
+            properties.setProperty( "password", "67hTdGTpc3NZxFWc" ); 
+            properties.setProperty( "autoReconnect", "true" ); 
+            properties.setProperty( "maxReconnects", "100" ); 
+    
         val connection: Connection =
         DriverManager.getConnection( 
             "jdbc:mysql://localhost/core", 
-            "core", 
-            "67hTdGTpc3NZxFWc" 
+             properties
         );
         SessionFactory.concreteFactory = Some( () =>
             Session.create( connection, new MySQLAdapter ) 
-        );        
+        );    
+        
         return connection;
     }
     
@@ -51,9 +58,7 @@ abstract
 
 object PersonDatabase extends ElementDatabase {
  
-    connect;
- 
-    val table: Table[Person] = super.table[Person];
+    val table: Table[Person] = super.table[Person];    
     
     on( table )( 
       p => declare(
@@ -61,17 +66,17 @@ object PersonDatabase extends ElementDatabase {
         p.name is ( unique ),
         p.email defaultsTo( "" )
       )  
-    )    
+    )
     
-    def addPerson( person: Person ) = { 
+    def addPerson( person: Person ) = {
         connect;
-        transaction {
+        inTransaction {
             table.insert( person );
         }
     }
     
     def getPersonById( id: Long ): Option[Person] = {
-        
+        connect;
         inTransaction {
             val candidate = table.lookup( id ).get;
 
@@ -83,7 +88,7 @@ object PersonDatabase extends ElementDatabase {
     }
     
     def getPersonByName( name: String ): Option[Person] = {
-        
+        connect;
         inTransaction {
             val candidate = table.where( p => p.name === name ).single;
             
@@ -109,7 +114,7 @@ object PersonDatabase extends ElementDatabase {
     
     def removePerson( person: Person ) = {
         connect;
-        transaction {
+        inTransaction {
             table.deleteWhere( p => p.name === person.name );
         }
     }
@@ -117,8 +122,7 @@ object PersonDatabase extends ElementDatabase {
 }
 
 object LoanDatabase extends ElementDatabase {
-
-    connect;    
+    
     val table: Table[Loan] = super.table[Loan];
 
     on( table )( 
@@ -128,14 +132,14 @@ object LoanDatabase extends ElementDatabase {
     )
     
     def addLoan( loan: Loan ) = {
-        
+        connect;
         inTransaction {
             table.insert( loan );
         }
     }
 
     def getLoanById( id: Long ): Option[Loan] = {
-        
+        connect;
         inTransaction {
             val candidate = table.lookup( id ).get;
 
@@ -147,7 +151,7 @@ object LoanDatabase extends ElementDatabase {
     }
     
     def getLoansTo( person: Person ): List[Loan] = {
-        
+        connect;
         inTransaction {
             val candidates = table.where( l => person.id === l.toPerson )
             return candidates.toList;
@@ -155,7 +159,7 @@ object LoanDatabase extends ElementDatabase {
     }
     
     def getLoansFrom( person: Person ): List[Loan] = {
-        
+        connect;
         inTransaction {
             val candidates = table.where( l => person.id === l.fromPerson )
             return candidates.toList;            
@@ -163,21 +167,21 @@ object LoanDatabase extends ElementDatabase {
     }
     
     def removeLoansByEntity( entity: Entity ) = {
-        
+        connect;
         inTransaction {
             table.deleteWhere( l => l.entity === entity.id );         
         }       
     }    
     
     def removeLoansTo( person: Person ) = {
-        
+        connect;
         inTransaction {
             table.deleteWhere( l => l.toPerson === person.id );         
         }    
     }
     
     def removeLoan( loan: Loan ) {
-        
+        connect;
         inTransaction {
             table.deleteWhere( l => l.id === loan.id );         
         }     
@@ -185,8 +189,7 @@ object LoanDatabase extends ElementDatabase {
 }
 
 object EntityDatabase extends ElementDatabase {
-
-    connect;
+    
     val table: Table[Entity] = super.table[Entity];
 
     on( table )( 
@@ -196,14 +199,14 @@ object EntityDatabase extends ElementDatabase {
     )
     
     def addEntity( entity: Entity ) {
-        
+        connect;
         inTransaction {
             table.insert( entity )
         }
     }
     
     def getEntitiesByArticle( article: Article ): List[Entity] = {
-        
+        connect;
         inTransaction {
             val candidates = table.where( e => e.article === article.id );
             return candidates.toList;
@@ -213,8 +216,7 @@ object EntityDatabase extends ElementDatabase {
 }
 
 object ArticleDatabase extends ElementDatabase {
-
-    connect;    
+    
     val table: Table[Article] = super.table[Article];
     
     on( table )( 
@@ -225,14 +227,14 @@ object ArticleDatabase extends ElementDatabase {
     )    
     
     def addArticle( article: Article ) {
-        
+        connect;
         inTransaction {
             table.insert( article )
         }
     }
 
     def getArticleById( id: Long ): Option[Article] = {
-        
+        connect;
         inTransaction {
             val candidate = table.lookup( id ).get;
             if ( candidate.isInstanceOf[Article] )
@@ -243,7 +245,7 @@ object ArticleDatabase extends ElementDatabase {
     }
     
     def getArticleByName( articleName: String ): Option[Article] = {
-        
+        connect;
         inTransaction {
             val candidate = table.where( a => articleName === a.name );
             return Some( candidate.toList.head );
@@ -251,7 +253,7 @@ object ArticleDatabase extends ElementDatabase {
     }
     
     def removeArticle( article: Article ) {
-        
+        connect;
         inTransaction {
             table.deleteWhere( a => a.id === article.id );
         }
@@ -261,8 +263,7 @@ object ArticleDatabase extends ElementDatabase {
 }
 
 object CodeDatabase extends ElementDatabase {
-
-    connect;    
+    
     val table: Table[Code] = super.table[Code];
 
     on( table )( 
@@ -272,21 +273,21 @@ object CodeDatabase extends ElementDatabase {
     )
     
     def addCode( code: Code ) {
-        
+        connect;
         inTransaction {
             table.insert( code )
         }
     }
     
     def getCodesByEntity( entity: Entity ) {
-        
+        connect;
         inTransaction {
             val candidates = table.where( c => c.entity === entity.id );
         }
     }
     
     def removeCode( code: Code ) {
-        
+        connect;
         inTransaction {
             table.deleteWhere( c => c.id === code.id );
         }
@@ -303,7 +304,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     def table[E] = super.table; 
     
     def addElement( element: E ) {
-        
+        connect;
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.insert( element );
@@ -311,7 +312,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     }
     
     def getElement( element: E ) = {
-        
+        connect;
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.where( e => element.id === e.id )
@@ -319,7 +320,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     }
     
     def getElementById( id: Long ): Option[E] = {
-        
+        connect;
         val candidate: E = table.lookup( id ).get;
 
         if ( candidate.isInstanceOf[E] )
@@ -330,7 +331,7 @@ class GenericDatabase[E <: Element] extends ElementDatabase {
     }
     
     def removeElement( element: E ) {
-        
+        connect;
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.deleteWhere( e => e.id === element.id )
