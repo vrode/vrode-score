@@ -62,7 +62,7 @@ object Core {
         val person = new Datatype( "person" );
          person has new Property ( "name",      "String"          );
          person has new Property ( "phone",     "Long",       "0" );
-         person has new Property ( "email",     "String",     "\"\""  );
+        // person has new Property ( "email",     "String",     "\"\""  );
         
 
         val loan = new Datatype( "loan" );        
@@ -172,9 +172,9 @@ object Core {
         
         // var deliever: Long = Console.readLong;
         
+        PersonDatabase initialize
         
-        
-        PersonDatabase removePerson new Person( "Dave " )
+        // PersonDatabase removePerson new Person( "Dave " )
         PersonDatabase addPerson new Person( "Dave" )
         
         
@@ -182,7 +182,7 @@ object Core {
       
       
       space
-      space
+      space 
 
         
         println( EventLog.extract );

@@ -8,6 +8,7 @@ import java.sql.{ DriverManager, Connection };
 import java.util.Properties;
 
 import com.mysql.jdbc.Driver;
+import org.postgresql.Driver;
 
 import org.squeryl._;
 import org.squeryl.Schema;
@@ -27,33 +28,41 @@ abstract
     
    protected
     def connect: Connection = {
-        Class.forName("com.mysql.jdbc.Driver");
+        // Class.forName("com.mysql.jdbc.Driver");
+        Class.forName("org.postgresql.Driver");
     
         val properties: Properties = new Properties();
             properties.setProperty( "user", "core" );
             properties.setProperty( "password", "67hTdGTpc3NZxFWc" ); 
-            properties.setProperty( "autoReconnect", "true" ); 
-            properties.setProperty( "maxReconnects", "100" ); 
+            // properties.setProperty( "autoReconnect", "true" ); 
+            // properties.setProperty( "maxReconnects", "100" ); 
     
+        // val connection: Connection =
+        // DriverManager.getConnection( 
+            // "jdbc:mysql://localhost/core", 
+             // properties
+        // );        
         val connection: Connection =
         DriverManager.getConnection( 
-            "jdbc:mysql://localhost/core", 
+            "jdbc:postgresql://146.247.221.160/core", 
              properties
         );
+        // SessionFactory.concreteFactory = Some( () =>
+            // Session.create( connection, new MySQLAdapter ) 
+        // );          
         SessionFactory.concreteFactory = Some( () =>
-            Session.create( connection, new MySQLAdapter ) 
+            Session.create( connection, new PostgreSqlAdapter ) 
         );    
         
         return connection;
     }
     
     def initialize() {
-        
         inTransaction {
             drop
             create 
         }
-    }
+    }    
 }
 
 object PersonDatabase extends ElementDatabase {
@@ -63,8 +72,8 @@ object PersonDatabase extends ElementDatabase {
     on( table )( 
       p => declare(
         p.id is ( unique  ),
-        p.name is ( unique ),
-        p.email defaultsTo( "" )
+        p.name is ( unique )
+        // p.email defaultsTo( "" )
       )  
     )
     
