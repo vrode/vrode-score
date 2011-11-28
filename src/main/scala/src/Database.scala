@@ -4,7 +4,7 @@ package core;
 
 import scala.collection.mutable._;
 
-import java.sql.{DriverManager, Connection};
+import java.sql.{ DriverManager, Connection };
 
 import com.mysql.jdbc.Driver;
 
@@ -19,12 +19,12 @@ import org.squeryl.internals.FieldMetaData;
 
 
 abstract
- class ElementDatabase {
+ class ElementDatabase extends Schema {
     
-    var connection: Connection = this.connect;
+    connect;
+    initialize;
     
-    // connects to the database via DriverManager from java.sql
-    // supplying url, username, password
+   protected
     def connect: Connection = {
         Class.forName("com.mysql.jdbc.Driver");
         
@@ -40,73 +40,38 @@ abstract
         return connection;
     }
     
-   protected
-    object Stockpile extends Schema {
-        val personTable      = table[Person]  ( "person" );
-        val loanTable        = table[Loan]    ( "loan" );
-        val articleTable     = table[Article] ( "article" );
-        val entityTable      = table[Entity]  ( "entity" );
-        val codeTable        = table[Code]    ( "code" );
-        
-        on( personTable )( p => declare(
-            // p.id    is( indexed )
-            p.name is ( unique ),
-            p.email defaultsTo( "" )
-          )  
-        )
-        
-        on( loanTable )( l => declare(
-            // l.id    is( indexed )
-            // entity is a unique representation of article
-            // for instance: cable#25 is an entity of "cable"-article
-            l.entity is ( unique ) 
-          )  
-        )
-        
-        on( articleTable )( a => declare(
-            a.name is ( unique ),
-            a.value defaultsTo( 0L )
-          )  
-        )
-        
-        on( entityTable )( e => declare(
-            // e.id    is( indexed )
-          )  
-        )
-        
-        on( codeTable )( c => declare(
-            // c.id    is( indexed )
-          )  
-        )
-    } 
-
     def initialize() {
-        connect;
+        
         inTransaction {
-            import Stockpile._;            
             drop
             create 
         }
-    }    
+    }
 }
 
-class PersonDatabase extends ElementDatabase {
-
-    import Stockpile._;
-    val table = personTable;
+object PersonDatabase extends ElementDatabase {
+ 
+    connect;
+ 
+    val table: Table[Person] = super.table[Person];
     
-    // Singular methods apply only to a single element,
-    // deals with ambiguity by fetching the first returned row
+    on( table )( 
+      p => declare(
+        p.id is ( unique  ),
+        p.name is ( unique ),
+        p.email defaultsTo( "" )
+      )  
+    )    
     
     def addPerson( person: Person ) = { 
         connect;
-        inTransaction {
+        transaction {
             table.insert( person );
         }
     }
     
     def getPersonById( id: Long ): Option[Person] = {
-        connect;
+        
         inTransaction {
             val candidate = table.lookup( id ).get;
 
@@ -118,7 +83,7 @@ class PersonDatabase extends ElementDatabase {
     }
     
     def getPersonByName( name: String ): Option[Person] = {
-        connect;
+        
         inTransaction {
             val candidate = table.where( p => p.name === name ).single;
             
@@ -142,31 +107,35 @@ class PersonDatabase extends ElementDatabase {
         new Person( "" );
     }
     
-    
     def removePerson( person: Person ) = {
         connect;
-        inTransaction {
+        transaction {
             table.deleteWhere( p => p.name === person.name );
         }
     }
     
 }
 
-class LoanDatabase extends ElementDatabase {
+object LoanDatabase extends ElementDatabase {
 
-    import Stockpile._
-    
-    val table = loanTable;
+    connect;    
+    val table: Table[Loan] = super.table[Loan];
+
+    on( table )( 
+      l => declare(
+        l.entity is ( unique ) 
+      )  
+    )
     
     def addLoan( loan: Loan ) = {
-        connect;
+        
         inTransaction {
             table.insert( loan );
         }
     }
 
     def getLoanById( id: Long ): Option[Loan] = {
-        connect;
+        
         inTransaction {
             val candidate = table.lookup( id ).get;
 
@@ -178,7 +147,7 @@ class LoanDatabase extends ElementDatabase {
     }
     
     def getLoansTo( person: Person ): List[Loan] = {
-        connect;
+        
         inTransaction {
             val candidates = table.where( l => person.id === l.toPerson )
             return candidates.toList;
@@ -186,52 +155,55 @@ class LoanDatabase extends ElementDatabase {
     }
     
     def getLoansFrom( person: Person ): List[Loan] = {
-        connect;
+        
         inTransaction {
             val candidates = table.where( l => person.id === l.fromPerson )
             return candidates.toList;            
         }
     }
     
-    // entity is unique for each loan
     def removeLoansByEntity( entity: Entity ) = {
-        connect;
+        
         inTransaction {
             table.deleteWhere( l => l.entity === entity.id );         
         }       
     }    
     
-    
     def removeLoansTo( person: Person ) = {
-        connect;
+        
         inTransaction {
             table.deleteWhere( l => l.toPerson === person.id );         
         }    
     }
     
     def removeLoan( loan: Loan ) {
-        connect;
+        
         inTransaction {
             table.deleteWhere( l => l.id === loan.id );         
         }     
     }
 }
 
-class EntityDatabase extends ElementDatabase {
+object EntityDatabase extends ElementDatabase {
 
-    import Stockpile._;
-    
-    var table = entityTable;
+    connect;
+    val table: Table[Entity] = super.table[Entity];
+
+    on( table )( 
+      e => declare(
+        // e.entity is ( unique ) 
+      )  
+    )
     
     def addEntity( entity: Entity ) {
-        connect;
+        
         inTransaction {
             table.insert( entity )
         }
     }
     
     def getEntitiesByArticle( article: Article ): List[Entity] = {
-        connect;
+        
         inTransaction {
             val candidates = table.where( e => e.article === article.id );
             return candidates.toList;
@@ -240,21 +212,27 @@ class EntityDatabase extends ElementDatabase {
     
 }
 
-class ArticleDatabase extends ElementDatabase {
+object ArticleDatabase extends ElementDatabase {
 
-    import Stockpile._;
+    connect;    
+    val table: Table[Article] = super.table[Article];
     
-    var table = articleTable;
+    on( table )( 
+      a => declare(
+        a.name is ( unique ),
+        a.value defaultsTo( 0L )
+      )  
+    )    
     
     def addArticle( article: Article ) {
-        connect;
+        
         inTransaction {
             table.insert( article )
         }
     }
 
     def getArticleById( id: Long ): Option[Article] = {
-        connect;
+        
         inTransaction {
             val candidate = table.lookup( id ).get;
             if ( candidate.isInstanceOf[Article] )
@@ -265,7 +243,7 @@ class ArticleDatabase extends ElementDatabase {
     }
     
     def getArticleByName( articleName: String ): Option[Article] = {
-        connect;
+        
         inTransaction {
             val candidate = table.where( a => articleName === a.name );
             return Some( candidate.toList.head );
@@ -273,7 +251,7 @@ class ArticleDatabase extends ElementDatabase {
     }
     
     def removeArticle( article: Article ) {
-        connect;
+        
         inTransaction {
             table.deleteWhere( a => a.id === article.id );
         }
@@ -282,28 +260,33 @@ class ArticleDatabase extends ElementDatabase {
 
 }
 
-class CodeDatabase extends ElementDatabase {
+object CodeDatabase extends ElementDatabase {
 
-    import Stockpile._;
-    
-    var table = codeTable;
+    connect;    
+    val table: Table[Code] = super.table[Code];
+
+    on( table )( 
+      c => declare(
+        // c.id    is( indexed )
+      )  
+    )
     
     def addCode( code: Code ) {
-        connect;
+        
         inTransaction {
             table.insert( code )
         }
     }
     
     def getCodesByEntity( entity: Entity ) {
-        connect;
+        
         inTransaction {
             val candidates = table.where( c => c.entity === entity.id );
         }
     }
     
     def removeCode( code: Code ) {
-        connect;
+        
         inTransaction {
             table.deleteWhere( c => c.id === code.id );
         }
@@ -311,13 +294,16 @@ class CodeDatabase extends ElementDatabase {
 
 }
 
-// [+]
-class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase {
 
-    import Stockpile._;
+
+
+class GenericDatabase[E <: Element] extends ElementDatabase {
+    
+    // not sure if works
+    def table[E] = super.table; 
     
     def addElement( element: E ) {
-        connect;
+        
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.insert( element );
@@ -325,7 +311,7 @@ class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase 
     }
     
     def getElement( element: E ) = {
-        connect;
+        
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.where( e => element.id === e.id )
@@ -333,7 +319,7 @@ class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase 
     }
     
     def getElementById( id: Long ): Option[E] = {
-        connect;
+        
         val candidate: E = table.lookup( id ).get;
 
         if ( candidate.isInstanceOf[E] )
@@ -344,7 +330,7 @@ class GenericDatabase[E <: Element] ( table: Table[E] ) extends ElementDatabase 
     }
     
     def removeElement( element: E ) {
-        connect;
+        
         val table = findTablesFor[E]( element ).head
         inTransaction {
             table.deleteWhere( e => e.id === element.id )

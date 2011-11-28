@@ -80,11 +80,13 @@ object Core {
             new Property( "purpose",        "String"    )        // event where article is used
         );
         
-        val personGroup = new Datatype( "personGroup" );    // gives rights, like loan registration
+        val personGroup = new Datatype( "personGroup" );    
+         // gives rights, like loan registration
          personGroup has new Property( "name", "String" );
          personGroup has new Property( "person", "Long" );
          
         val articleGroup = new Datatype( "articleGroup" );
+         // classifies objects
          articleGroup has new Property( "name", "String" );
          articleGroup has new Property( "article", "Long" );   
         
@@ -118,61 +120,62 @@ object Core {
         
       space
         
-        initialize
+        // initialize
         
-        val personDatabase  = new PersonDatabase();
-        val loanDatabase    = new LoanDatabase();
-        val articleDatabase = new ArticleDatabase();
-        val entityDatabase  = new EntityDatabase();
-        val codeDatabase    = new CodeDatabase();
+        // val personDatabase  = new PersonDatabase();
+        // val loanDatabase    = new LoanDatabase();
+        // val articleDatabase = new ArticleDatabase();
+        // val entityDatabase  = new EntityDatabase();
+        // val codeDatabase    = new CodeDatabase();
             
-        personDatabase.initialize();
+        // personDatabase.initialize();
         
-        personDatabase.addPerson( new Person( "David Murray" ) );
-        personDatabase.addPerson( new Person( "John Carr" ) );
-        personDatabase.addPerson( new Person( "Elvis Santiago" ) );
-        personDatabase.addPerson( new Person( "Jesus Geist" ) );
-        personDatabase.addPerson( new Person( "Emilio Stevens" ) );       
+        // personDatabase.addPerson( new Person( "David Murray" ) );
+        // personDatabase.addPerson( new Person( "John Carr" ) );
+        // personDatabase.addPerson( new Person( "Elvis Santiago" ) );
+        // personDatabase.addPerson( new Person( "Jesus Geist" ) );
+        // personDatabase.addPerson( new Person( "Emilio Stevens" ) );       
 
 
 
        
-        ( List( 
-                new Article( "Aktiv Heoytaler", "", 0 ),
-                new Article( "DJ Flight Newmark", "", 0 ),
-                new Article( "DJ Flight Pioneer", "", 0 ),
-                new Article( "Platespiller", "", 0 ),
-                new Article( "Mikser Blaa", "", 0 ),
-                new Article( "Mikser Graa", "", 0 ),
-                new Article( "Mikrofon SM 57", "", 0 ),
-                new Article( "DJ Boks", "", 0 ),
-                new Article( "Mikrofonstativ", "", 0 ),
-                new Article( "XLR Kabel", "", 0 ),
-                new Article( "Streomkabel", "", 0 ),
-                new Article( "Phonokabel", "", 0 ),
-                new Article( "Phono-minijack kabel", "", 0 ),
-                new Article( "Prosjektor Graa", "", 0 ),
-                new Article( "Prosjektor Svart", "", 0 ),
-                new Article( "VGA (skjerm) kabel", "", 0 )
-            )
-        ).map( articleDatabase.addArticle( _ ) );
+        // ( List( 
+                // new Article( "Aktiv Heoytaler", "", 0 ),
+                // new Article( "DJ Flight Newmark", "", 0 ),
+                // new Article( "DJ Flight Pioneer", "", 0 ),
+                // new Article( "Platespiller", "", 0 ),
+                // new Article( "Mikser Blaa", "", 0 ),
+                // new Article( "Mikser Graa", "", 0 ),
+                // new Article( "Mikrofon SM 57", "", 0 ),
+                // new Article( "DJ Boks", "", 0 ),
+                // new Article( "Mikrofonstativ", "", 0 ),
+                // new Article( "XLR Kabel", "", 0 ),
+                // new Article( "Streomkabel", "", 0 ),
+                // new Article( "Phonokabel", "", 0 ),
+                // new Article( "Phono-minijack kabel", "", 0 ),
+                // new Article( "Prosjektor Graa", "", 0 ),
+                // new Article( "Prosjektor Svart", "", 0 ),
+                // new Article( "VGA (skjerm) kabel", "", 0 )
+            // )
+        // ).map( articleDatabase.addArticle( _ ) );
         
-        entityDatabase.addEntity( 
-            new Entity( articleDatabase.getArticleByName( "Phonokabel" ).get.id )
-        );
-        entityDatabase.addEntity( 
-            new Entity( articleDatabase.getArticleByName( "Phonokabel" ).get.id )
-        );
+        // entityDatabase.addEntity( 
+            // new Entity( articleDatabase.getArticleByName( "Phonokabel" ).get.id )
+        // );
+        // entityDatabase.addEntity( 
+            // new Entity( articleDatabase.getArticleByName( "Phonokabel" ).get.id )
+        // );
         
-        codeDatabase.addCode( new Code( "504506010222955", "qr", 12 ) );
-        codeDatabase.addCode( new Code( "504506010222955", "barcode", 12 ) );
-        
-        
-        var deliever: Long = Console.readLong;
+        // codeDatabase.addCode( new Code( "504506010222955", "qr", 12 ) );
+        // codeDatabase.addCode( new Code( "504506010222955", "barcode", 12 ) );
         
         
+        // var deliever: Long = Console.readLong;
         
         
+        
+        PersonDatabase removePerson new Person( "Dave " )
+        PersonDatabase addPerson new Person( "Dave" )
         
         
       
